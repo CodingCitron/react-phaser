@@ -1,11 +1,11 @@
-import { Types } from "phaser";
-import { BootScene } from "./scenes/boot";
+import { Types } from "phaser"
+import { BootScene } from "./scenes/boot"
 
 const gameConfig: Types.Core.GameConfig = {
-    width: "100%",
-    height: "100%",
+    width: 840,
+    height: 480,
     type: Phaser.AUTO,
-    scale: {
+/*     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH
     },
@@ -13,8 +13,14 @@ const gameConfig: Types.Core.GameConfig = {
       antialias: false,
       pixelArt: true,
       roundPixels: true
+    }, */
+    physics: {
+        default: 'arcade',
+        // arcade: {
+        //     debug: process.env.DEBUG === 'true' 
+        // }
     },
-    scene: BootScene
+    scene: [BootScene] // [BootScene, EndScene] 여러가지 사용
 }
   
-  export default gameConfig;
+  export default gameConfig
