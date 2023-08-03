@@ -1,6 +1,7 @@
 import { Scene, GameObjects } from "phaser";
 import background from '../../assets/img/grass.png'
-import player from '../../assets/img/Basic Charakter Spritesheet.png'
+import player from '../../assets/img/characters/cat-set.png'
+import player2 from '../../assets/img/characters/Basic Charakter Spritesheet.png'
 import gameConfig from "..";
 
 interface Player extends GameObjects.Sprite {
@@ -18,8 +19,8 @@ export class BootScene extends Scene {
         // this.load.image('player', player)
 
         this.load.spritesheet('player', player, {
-            frameWidth: 48,
-            frameHeight: 48
+            frameWidth: 16,
+            frameHeight: 16
         })
     }
 
@@ -61,20 +62,23 @@ export class BootScene extends Scene {
 
         this.anims.create({
             key: 'player_anim',
-            frames: this.anims.generateFrameNumbers('player'),
+            frames: this.anims.generateFrameNumbers('player', {
+                start: 4,
+                end: 7
+            }),
             frameRate: 12,
             repeat: -1
         })
 
-        this.anims.create({
-            key: 'player_idle',
-            frames: this.anims.generateFrameNumbers('player', {
-                start: 0,
-                end: 0
-            }),
-            frameRate: 1,
-            repeat: 0
-        })
+        // this.anims.create({
+        //     key: 'player_idle',
+        //     frames: this.anims.generateFrameNumbers('player', {
+        //         start: 0,
+        //         end: 0
+        //     }),
+        //     frameRate: 1,
+        //     repeat: 0
+        // })
 
         this.keyboardInput = this.input.keyboard?.createCursorKeys()
         // this.player.play('player_anim')
@@ -92,13 +96,18 @@ export class BootScene extends Scene {
                 console.log('')
 
             if(!player.moving) {
-                player.play('player_anim')
+                const sprite = player.play('player_anim')
+                // console.log(sprite.anims.generateFrameNumbers)
             }
 
             player.moving = true
         } else {
             if(player.moving) {
-                player.play('player_idle')
+                const sprite = player.play('player_anim')
+                sprite.anims.pause()
+                // sprite.anims.showOnStart = true
+                // sprite.anims.currentAnim?.getFrameByProgress(1)
+                // player.play('player_idle')
             }
 
             player.moving = false

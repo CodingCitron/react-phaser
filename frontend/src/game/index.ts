@@ -16,9 +16,12 @@ const gameConfig: Types.Core.GameConfig = {
     }, */
     physics: {
         default: 'arcade',
-        // arcade: {
-        //     debug: process.env.DEBUG === 'true' 
-        // }
+        arcade: {
+            // debug: process.env.DEBUG === 'true' 
+          gravity: {
+            y: 200
+          }
+        }
     },
     scene: [BootScene] // [BootScene, EndScene] 여러가지 사용
 }
