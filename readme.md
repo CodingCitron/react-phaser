@@ -4,3 +4,8 @@
 
 ### phaser js 강좌
 - https://www.youtube.com/@ourcadetv/playlists
+
+
+### 캐릭터 무브
+- https://www.youtube.com/watch?v=fdXcD9X4NrQ
+- https://www.youtube.com/watch?v=2opeyedTJoY
