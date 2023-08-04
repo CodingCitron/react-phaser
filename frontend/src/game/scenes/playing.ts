@@ -2,10 +2,23 @@ import Phaser, { GameObjects } from "phaser"
 
 import { setBackground } from "../utils/backgroundManager"
 import Player from "../characters/player"
+import gameConfig from ".."
+import { addMonsterEvent } from "../utils/monsterManager"
+import Monster from "../characters/monster"
+
+import { addAttckEvent } from '../utils/attackManager'
 
 export default class PlayingScene extends Phaser.Scene {
-    private player?: Player 
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys
+
+    public player?: Player 
+    public background?: Phaser.GameObjects.TileSprite
+    public monsters?: Phaser.Physics.Arcade.Group
+    public monsterEvents?: object[]
+    public closest?: GameObjects.GameObject | null
+    public weaponDynamic?: GameObjects.Group
+    public weaponStatic?: GameObjects.Group
+    public attackEvent?: object
 
     constructor() {
         super('playGame')
@@ -18,11 +31,26 @@ export default class PlayingScene extends Phaser.Scene {
 
         // player를 m_player라는 멤버 변수로 추가합니다.
         this.player = new Player(this)
-
+        this.cameras.main.startFollow(this.player)
         // PlayingScene의 background를 설정합니다.
-        setBackground(this, 'background')
+        this.background = setBackground(this, 'background')
 
+        // monsters
         this.cursorKeys = this.input.keyboard?.createCursorKeys()
+        this.monsters = this.physics.add.group()
+        this.monsters.add(new Monster(this, 0, 0, 'mob1', 'mob1_anim', 10, 0.9))
+        this.monsterEvents = []
+
+        addMonsterEvent(this, 1000, 'mob1', 'mob1_anim', 10, 0.9)
+
+        // weapon
+        this.weaponDynamic = this.add.group()
+        this.weaponStatic = this.add.group()
+        this.attackEvent = {}
+
+        this.attackEvent = {
+            ...addAttckEvent(this, 'beam', 10, 1, 1000)
+        }
     }
 
     init() {
@@ -31,8 +59,24 @@ export default class PlayingScene extends Phaser.Scene {
     }
 
     update() {
-        // console.log('update')
         this.movePlayerManager()
+        // console.log(this.player?.x)
+        const xValue = (this.player?.x as number) - (gameConfig.width as number) / 2
+        const yValue = (this.player?.y as number) - (gameConfig.height as number) / 2
+
+        // console.log(xValue, yValue)
+
+        if(this.background) {
+            this.background.setX(xValue - 17)
+            this.background.setY(yValue - 17)
+            this.background.tilePositionX = xValue
+            this.background.tilePositionY = yValue
+        }
+
+        this.closest = this.physics.closest(
+            this.player as Player,
+            this.monsters?.getChildren()
+        )
     }
 
     isMoveKeydown () {
@@ -41,43 +85,49 @@ export default class PlayingScene extends Phaser.Scene {
         return (left.isDown || right.isDown || up.isDown || down.isDown)
     }
 
-    // Phaser.Input.Keyboard.Key
     movePlayerManager() {
         // vector를 사용해 움직임을 관리할 것입니다.
         // vector = [x좌표 방향, y좌표 방향]입니다.
         // 왼쪽 키가 눌려있을 때는 vector[0] += -1, 오른쪽 키가 눌려있을 때는 vector[0] += 1을 해줍니다.
         // 위/아래 또한 같은 방법으로 벡터를 수정해줍니다.
         const vector = [0, 0]
+        let moveValue = ''
         const { right, left, up, down } = this.cursorKeys as Phaser.Types.Input.Keyboard.CursorKeys
         const player = this.player as Player
 
-        if(left.isDown) vector[0] += -1
-        if(right.isDown) vector[0] += 1    
-        if(up.isDown) vector[1] += -1
-        if(down.isDown) vector[1] += 1
-        
-        const [x, y] = vector
-
         if(this.isMoveKeydown()) {
-            if(!player.moving) {
-                if(x) {
-                    
-                } else {
-
-                }
+            if(left.isDown) {
+                moveValue = 'run-left'
+                vector[0] += -1
+            } else if(right.isDown) {
+                moveValue = 'run-right'
+                vector[0] += 1
+            } else if(up.isDown) {
+                moveValue = 'run-up'
+                vector[1] += -1
+            } else if(down.isDown) {
+                moveValue = 'run-down'
+                vector[1] += 1
+            } else {
+                moveValue = 'idle'
             }
 
             player.moving = true
         } else {
-            if(player.moving) {
-
-            }
-
             player.moving = false
         }
 
+        if(moveValue && moveValue !== 'idle') {
+            if(player.anims.currentAnim?.key !== moveValue) {
+                player.play(moveValue)
+            } 
+        } else {
+            const dir = player.anims.currentAnim?.key.split('-')[1]
+            if(dir) player.play(`idle-${dir}`)
+        } 
+
         player.setVelocityX(vector[0] * player.speed)
-        player.setVelocityY(vector[1] * player.speed)    
+        player.setVelocityY(vector[1] * player.speed)
     }
 
     resize(gameSize: GameObjects.Components.Size) {

@@ -5,17 +5,18 @@ import PlayingScene from "./scenes/playing"
 // console.log(window.innerWidth, window.innerHeight)
 
 const gameConfig: Types.Core.GameConfig = {
-    width: window.innerWidth, // 840,
-    height: window.innerHeight, //480,
+    width: window.innerWidth + 34, // 840,
+    height: window.innerHeight + 34, //480,
     type: Phaser.AUTO,
+
     // scale: {
     //   mode: Phaser.Scale.FIT,
     //   autoCenter: Phaser.Scale.CENTER_BOTH
     // },
     render: {
-      antialias: false,
+      antialias: true,
       pixelArt: true,
-      roundPixels: true
+      // roundPixels: true
     },
     physics: {
         default: 'arcade',
