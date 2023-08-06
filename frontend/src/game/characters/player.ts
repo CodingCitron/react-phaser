@@ -1,10 +1,11 @@
 import Phaser from "phaser"
 import Config from '../index'
-
+import HpBar from '../ui/HpBar'
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     public moving: boolean
     public speed: number
     public canBeAttacked: boolean
+    public hpBar: HpBar
 
     constructor(scene: Phaser.Scene) {
         // 화면의 가운데에 player를 추가해줍니다.
@@ -31,6 +32,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // 플레이어가 공격받을 수 있는 상태인지
         this.canBeAttacked = true
+
+        this.hpBar = new HpBar(scene, this, 100)
     }
 
     private createPlayerAnimations() {
@@ -117,6 +120,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // 쿨타임을 갖습니다.
         this.setCooldown()
+
+        this.hpBar.decrease(damage)
+
+        if(this.hpBar.currentHP <= 0) {
+            console.log('GAME OVER')
+        }
     }
 
     // 공격받은 후 1초 쿨타임을 갖게 하는 함수입니다.
