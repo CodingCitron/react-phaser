@@ -4,6 +4,7 @@ import Config from '../index'
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     public moving: boolean
     public speed: number
+    public canBeAttacked: boolean
 
     constructor(scene: Phaser.Scene) {
         // 화면의 가운데에 player를 추가해줍니다.
@@ -27,6 +28,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.moving = false
         this.speed = 250
         this.createPlayerAnimations()
+
+        // 플레이어가 공격받을 수 있는 상태인지
+        this.canBeAttacked = true
     }
 
     private createPlayerAnimations() {
@@ -100,6 +104,34 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
                 key: 'player',
                 frame: 12
             }]
+        })
+    }
+    
+    // 몹과 접촉했을 경우 실행되는 함수입니다.
+    hitByMonster(damage: number) {
+        // 쿨타임이었던 경우 공격받지 않습니다.
+        if (!this.canBeAttacked) return
+
+        // 플레이어가 다친 소리를 재생합니다.
+        // this.scene.m_hurtSound.play()
+
+        // 쿨타임을 갖습니다.
+        this.setCooldown()
+    }
+
+    // 공격받은 후 1초 쿨타임을 갖게 하는 함수입니다.
+    // 공격받을 수 있는지 여부와 투명도를 1초동안 조절합니다.
+    setCooldown() {
+        this.canBeAttacked = false
+        this.alpha = 0.5
+        this.scene.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                this.alpha = 1;
+                this.canBeAttacked = true
+            },
+            callbackScope: this,
+            loop: false,
         })
     }
 }

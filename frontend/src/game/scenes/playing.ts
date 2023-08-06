@@ -7,6 +7,7 @@ import { addMonsterEvent } from "../utils/monsterManager"
 import Monster from "../characters/monster"
 
 import { addAttckEvent } from '../utils/attackManager'
+import { Weapon } from "../types"
 
 export default class PlayingScene extends Phaser.Scene {
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys
@@ -51,6 +52,42 @@ export default class PlayingScene extends Phaser.Scene {
         this.attackEvent = {
             ...addAttckEvent(this, 'beam', 10, 1, 1000)
         }
+
+        // collisions 충돌
+        // 플레이어와 몹의 충돌
+        this.physics.add.overlap(
+            this.player,
+            this.monsters,
+            () => this.player!.hitByMonster(10),
+            undefined,
+            this
+        )
+
+        // 몹이 플레이어 공격과 충돌
+        this.physics.add.overlap(
+            this.weaponDynamic,
+            this.monsters,
+            (weapon, monster) => {
+                return (monster as Monster).hitByWeaponDynamic(
+                    weapon as Weapon
+                )
+            },
+            undefined,
+            this
+        )
+
+        // 몹이 플레이어 공격과 충돌
+        this.physics.add.overlap(
+            this.weaponStatic,
+            this.monsters,
+            (weapon, monster) => {
+                return (monster as Monster).hitByWeaponStatic(
+                    weapon as Weapon
+                )
+            },
+            undefined,
+            this
+        )
     }
 
     init() {
