@@ -2,6 +2,7 @@ import PlayingScene from "../scenes/playing"
 import Player from "./player"
 import { Weapon } from "../types"
 import Explosion from "../effects/explosion"
+import ExpUp from "../items/expUp"
 
 export default class Monster extends Phaser.Physics.Arcade.Sprite {
     public speed: number
@@ -9,9 +10,10 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
     public dropRate?: number
     public events: Phaser.Time.TimerEvent | Phaser.Time.TimerEvent[]
     public canBeAttacked: boolean
+
     // public alpha: number
     private player?: Player
-
+    
     constructor(
         scene: PlayingScene, 
         x: number, y:number, 
@@ -25,7 +27,7 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this)
 
         this.player = scene.player
-
+        
         this.play(animKey)
         this.setDepth(50)
         this.setScale(2)
@@ -137,6 +139,13 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
     destroyMonster() {
         new Explosion(this.scene, this.x, this.y)
         this.scene.sound.get('explosion').play()
+
+        // random 0 ~ 1 값이 나옴 dropRate는 0.9인데 
+        // 0.9 아래의 값이 나오면 아이템을 떨군다.
+        if(Math.random() < (this.dropRate as number)) {
+            const expUp = new ExpUp(this.scene, this);
+            (this.scene as PlayingScene).expUps!.add(expUp)
+        }
 
         this.scene.time.removeEvent(this.events)
         this.destroy()

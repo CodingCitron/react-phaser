@@ -1,4 +1,4 @@
-import Phaser, { GameObjects } from "phaser"
+import Phaser, { GameObjects, Scene } from "phaser"
 
 import { setBackground } from "../utils/backgroundManager"
 import Player from "../characters/player"
@@ -8,6 +8,7 @@ import Monster from "../characters/monster"
 
 import { addAttckEvent } from '../utils/attackManager'
 import { Weapon } from "../types"
+import ExpUp from "../items/expUp"
 
 
 export default class PlayingScene extends Phaser.Scene {
@@ -21,6 +22,7 @@ export default class PlayingScene extends Phaser.Scene {
     public weaponDynamic?: GameObjects.Group
     public weaponStatic?: GameObjects.Group
     public attackEvent?: object
+    public expUps?: GameObjects.Group
 
     constructor() {
         super('playGame')
@@ -32,6 +34,7 @@ export default class PlayingScene extends Phaser.Scene {
         // add는 해당 scene에서 사용할 수 있도록 scene의 멤버 변수로 추가할 때 사용하는 것입니다.
         this.sound.add("beam")
         this.sound.add("explosion")
+        this.sound.add("expUp")
 
         // player를 m_player라는 멤버 변수로 추가합니다.
         this.player = new Player(this)
@@ -88,6 +91,16 @@ export default class PlayingScene extends Phaser.Scene {
                     weapon as Weapon
                 )
             },
+            undefined,
+            this
+        )
+
+        // item
+        this.expUps = this.physics.add.group()
+        this.physics.add.overlap(
+            this.player,
+            this.expUps,
+            (player, exp) => this.pickExpUp(player, exp as ExpUp),
             undefined,
             this
         )
@@ -168,6 +181,14 @@ export default class PlayingScene extends Phaser.Scene {
 
         player.setVelocityX(vector[0] * player.speed)
         player.setVelocityY(vector[1] * player.speed)
+    }
+
+    pickExpUp(_, expUp: ExpUp) {
+        expUp.disableBody(true, true)
+        expUp.destroy()
+
+        this.sound.get('expUp').play()
+        // console.log(`경험치 ${expUp.exp} 상승!`)
     }
 
     resize(gameSize: GameObjects.Components.Size) {
