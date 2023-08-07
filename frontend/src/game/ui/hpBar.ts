@@ -53,9 +53,6 @@ export default class HpBar extends Phaser.GameObjects.Graphics {
         // 이전에 그렸던 HP bar는 지워줍니다.
         this.clear()
 
-        this.fillStyle(0x000000)
-        this.fillRect(0, 0, this.width, this.height)
-
         // HP bar의 border를 검은색으로 그려줍니다.
         this.fillStyle(0x000000)
         this.fillRect(0, 0, this.width, this.height)

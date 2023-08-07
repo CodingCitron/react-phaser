@@ -1,7 +1,7 @@
 import { Types } from "phaser"
 import { BootScene } from "./scenes/boot"
 import PlayingScene from "./scenes/playing"
-
+import GameOverScene from "./scenes/gameover"
 // console.log(window.innerWidth, window.innerHeight)
 
 const gameConfig: Types.Core.GameConfig = {
@@ -25,7 +25,7 @@ const gameConfig: Types.Core.GameConfig = {
             debug: true
         }
     },
-    scene: [BootScene, PlayingScene] // [BootScene, EndScene] 여러가지 사용
+    scene: [BootScene, PlayingScene, GameOverScene] // [BootScene, EndScene] 여러가지 사용
 }
   
   export default gameConfig

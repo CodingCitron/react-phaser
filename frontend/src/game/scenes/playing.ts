@@ -9,6 +9,7 @@ import Monster from "../characters/monster"
 import { addAttckEvent } from '../utils/attackManager'
 import { Weapon } from "../types"
 
+
 export default class PlayingScene extends Phaser.Scene {
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys
 
@@ -29,6 +30,8 @@ export default class PlayingScene extends Phaser.Scene {
         // 사용할 sound들을 추가해놓는 부분입니다.
         // load는 전역적으로 어떤 scene에서든 asset을 사용할 수 있도록 load 해주는 것이고,
         // add는 해당 scene에서 사용할 수 있도록 scene의 멤버 변수로 추가할 때 사용하는 것입니다.
+        this.sound.add("beam")
+        this.sound.add("explosion")
 
         // player를 m_player라는 멤버 변수로 추가합니다.
         this.player = new Player(this)

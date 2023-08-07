@@ -1,12 +1,13 @@
 import PlayingScene from "../scenes/playing"
 import Player from "./player"
 import { Weapon } from "../types"
+import Explosion from "../effects/explosion"
 
 export default class Monster extends Phaser.Physics.Arcade.Sprite {
     public speed: number
     public hitpoint: number 
     public dropRate?: number
-    public events: object[]
+    public events: Phaser.Time.TimerEvent | Phaser.Time.TimerEvent[]
     public canBeAttacked: boolean
     // public alpha: number
     private player?: Player
@@ -70,6 +71,10 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
         const player = this.player as Player 
         if(this.x < player.x) this.flipX = true
         else this.flipX = false
+
+        if (this.hitpoint <= 0) {
+            this.destroyMonster()
+        }
     }
 
     hitByWeaponDynamic(weapon: Weapon) {
@@ -127,5 +132,13 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
             },
             loop: false,
         })
+    }
+
+    destroyMonster() {
+        new Explosion(this.scene, this.x, this.y)
+        this.scene.sound.get('explosion').play()
+
+        this.scene.time.removeEvent(this.events)
+        this.destroy()
     }
 }

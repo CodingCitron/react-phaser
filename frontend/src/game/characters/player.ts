@@ -1,6 +1,8 @@
 import Phaser from "phaser"
 import Config from '../index'
-import HpBar from '../ui/HpBar'
+import HpBar from '../ui/hpBar'
+import { loseGame } from "../utils/loseManager"
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     public moving: boolean
     public speed: number
@@ -123,8 +125,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.hpBar.decrease(damage)
 
+        // 패배
         if(this.hpBar.currentHP <= 0) {
-            console.log('GAME OVER')
+            loseGame(this.scene)
         }
     }
 
