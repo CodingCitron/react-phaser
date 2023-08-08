@@ -147,6 +147,7 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
             (this.scene as PlayingScene).expUps!.add(expUp)
         }
 
+        (this.scene as PlayingScene).barWrap?.gainMonstersKilled()
         this.scene.time.removeEvent(this.events)
         this.destroy()
     }

@@ -1,5 +1,9 @@
 import Phaser, { GameObjects, Scene } from "phaser"
 
+// ui
+import ExpBar from "../ui/expBar"
+import BarWrap from "../ui/barWrap"
+
 import { setBackground } from "../utils/backgroundManager"
 import Player from "../characters/player"
 import gameConfig from ".."
@@ -23,6 +27,8 @@ export default class PlayingScene extends Phaser.Scene {
     public weaponStatic?: GameObjects.Group
     public attackEvent?: object
     public expUps?: GameObjects.Group
+    public barWrap?: BarWrap
+    public expBar?: ExpBar
 
     constructor() {
         super('playGame')
@@ -104,6 +110,10 @@ export default class PlayingScene extends Phaser.Scene {
             undefined,
             this
         )
+
+        // ui
+        this.barWrap = new BarWrap(this)
+        this.expBar = new ExpBar(this, 50)
     }
 
     init() {
@@ -187,8 +197,14 @@ export default class PlayingScene extends Phaser.Scene {
         expUp.disableBody(true, true)
         expUp.destroy()
 
+        const expBar = this.expBar as ExpBar
+
         this.sound.get('expUp').play()
-        // console.log(`경험치 ${expUp.exp} 상승!`)
+        expBar.increase(expUp.exp)
+
+        if (expBar.currentExp >= expBar.maxExp) {
+            (this.barWrap as BarWrap).gainLevel()
+        }    
     }
 
     resize(gameSize: GameObjects.Components.Size) {
