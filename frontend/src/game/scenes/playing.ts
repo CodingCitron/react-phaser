@@ -1,4 +1,4 @@
-import Phaser, { GameObjects, Scene } from "phaser"
+import Phaser, { GameObjects } from "phaser"
 
 // ui
 import ExpBar from "../ui/expBar"
@@ -13,7 +13,7 @@ import Monster from "../characters/monster"
 import { addAttckEvent } from '../utils/attackManager'
 import { Weapon } from "../types"
 import ExpUp from "../items/expUp"
-
+import { pause } from "../utils/pauseManager"
 
 export default class PlayingScene extends Phaser.Scene {
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys
@@ -29,6 +29,7 @@ export default class PlayingScene extends Phaser.Scene {
     public expUps?: GameObjects.Group
     public barWrap?: BarWrap
     public expBar?: ExpBar
+    [key: string]: any
 
     constructor() {
         super('playGame')
@@ -41,6 +42,8 @@ export default class PlayingScene extends Phaser.Scene {
         this.sound.add("beam")
         this.sound.add("explosion")
         this.sound.add("expUp")
+        this.sound.add('pauseIn')
+        this.sound.add('pauseOut')
 
         // player를 m_player라는 멤버 변수로 추가합니다.
         this.player = new Player(this)
@@ -106,7 +109,7 @@ export default class PlayingScene extends Phaser.Scene {
         this.physics.add.overlap(
             this.player,
             this.expUps,
-            (player, exp) => this.pickExpUp(player, exp as ExpUp),
+            (player, exp) => this.pickExpUp(player as Player, exp as ExpUp),
             undefined,
             this
         )
@@ -114,6 +117,14 @@ export default class PlayingScene extends Phaser.Scene {
         // ui
         this.barWrap = new BarWrap(this)
         this.expBar = new ExpBar(this, 50)
+
+        this.input.keyboard?.on(
+            'keydown-ESC',
+            () => {
+                pause(this, 'pause')
+            },
+            this
+        )
     }
 
     init() {
@@ -193,7 +204,7 @@ export default class PlayingScene extends Phaser.Scene {
         player.setVelocityY(vector[1] * player.speed)
     }
 
-    pickExpUp(_, expUp: ExpUp) {
+    pickExpUp(_: Player, expUp: ExpUp) {
         expUp.disableBody(true, true)
         expUp.destroy()
 
@@ -203,11 +214,29 @@ export default class PlayingScene extends Phaser.Scene {
         expBar.increase(expUp.exp)
 
         if (expBar.currentExp >= expBar.maxExp) {
-            (this.barWrap as BarWrap).gainLevel()
+            pause(this, 'levelup')
+            // (this.barWrap as BarWrap).gainLevel()
         }    
     }
 
     resize(gameSize: GameObjects.Components.Size) {
         this.cameras.resize(gameSize.width, gameSize.height)
+    }
+
+    afterLevelUp() {
+        (this.barWrap as BarWrap).gainLevel()    
+
+        switch(this.barWrap?.level) {
+            case 2:
+                break
+            case 3:
+                break
+            
+            case 4:
+                break
+
+            default:
+                break
+        }
     }
 }

@@ -14,6 +14,8 @@ import beamOgg from '../../assets/sounds/beam.ogg'
 import explosionImg from '../../assets/img/spritesheets/explosion.png'
 import explosionOgg from '../../assets/sounds/explosion.ogg'
 import expUpOgg from '../../assets/sounds/expUp.ogg'
+import pauseInOgg from '../../assets/sounds/pauseIn.ogg'
+import pauseOutOgg from '../../assets/sounds/pauseOut.ogg'
 
 //font
 import fontPng from '../../assets/font/font.png'
@@ -57,6 +59,8 @@ export class BootScene extends Scene {
         this.load.audio("beam", beamOgg)
         this.load.audio("explosion", explosionOgg)
         this.load.audio("expUp", expUpOgg)
+        this.load.audio('pauseIn', pauseInOgg)
+        this.load.audio('pauseOut', pauseOutOgg)
 
         // FONT
         this.load.bitmapFont("pixelFont", fontPng, fontXml)
