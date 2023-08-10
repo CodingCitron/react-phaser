@@ -35,6 +35,7 @@ export function addMonsterEvent(
 
 export function removeOldestMonsterEvent(scene: PlayingScene) {
     if(scene.monsterEvents?.length) {
+        (scene.monsterEvents[0] as Phaser.Time.TimerEvent).remove()
         scene.monsterEvents.shift()
     }
 }

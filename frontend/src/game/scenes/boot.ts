@@ -4,6 +4,9 @@ import player from '../../assets/img/spritesheets/characters/cat-set.png'
 
 // monster
 import monster1 from '../../assets/img/spritesheets/mob1.png'
+import monster2 from '../../assets/img/spritesheets/mob2.png' 
+import monster3 from '../../assets/img/spritesheets/mob3.png'
+import monster4 from '../../assets/img/spritesheets/mob4.png'
 
 // item
 import expUpImg from '../../assets/img/spritesheets/expUp.png'
@@ -16,6 +19,12 @@ import explosionOgg from '../../assets/sounds/explosion.ogg'
 import expUpOgg from '../../assets/sounds/expUp.ogg'
 import pauseInOgg from '../../assets/sounds/pauseIn.ogg'
 import pauseOutOgg from '../../assets/sounds/pauseOut.ogg'
+import clawWhiteImg from '../../assets/img/spritesheets/claw-white.png'
+import clawYellowImg from '../../assets/img/spritesheets/claw-yellow.png'
+import catnipImg from '../../assets/img/spritesheets/catnip.png'
+import scratchOgg from '../../assets/sounds/scratch.ogg'
+import hitMobOgg from '../../assets/sounds/hitMob.ogg'
+import hurtOgg from '../../assets/sounds/hurt.ogg'
 
 //font
 import fontPng from '../../assets/font/font.png'
@@ -43,10 +52,37 @@ export class BootScene extends Scene {
             frameHeight: 32,
         })
 
+        this.load.spritesheet("claw_white", clawWhiteImg, {
+            frameWidth: 32,
+            frameHeight: 32,
+        })
+        
+        this.load.spritesheet("claw_yellow", clawYellowImg, {
+            frameWidth: 32,
+            frameHeight: 32,
+        })
+
+        this.load.spritesheet("catnip", catnipImg, {
+            frameWidth: 64,
+            frameHeight: 64,
+        })
+
         // MONSTER
         this.load.spritesheet('mob1', monster1, {
             frameWidth: 28,
             frameHeight: 28,
+        })
+        this.load.spritesheet('mob2', monster2, {
+            frameWidth: 32,
+            frameHeight: 32,
+        })
+        this.load.spritesheet('mob3', monster3, {
+            frameWidth: 32,
+            frameHeight: 32,
+        })
+        this.load.spritesheet('mob4', monster4, {
+            frameWidth: 32,
+            frameHeight: 32,
         })
 
         // ITEMS
@@ -57,10 +93,13 @@ export class BootScene extends Scene {
 
         // AUDIOS
         this.load.audio("beam", beamOgg)
+        this.load.audio("scratch", scratchOgg)
+        this.load.audio("hitMonster", hitMobOgg)
         this.load.audio("explosion", explosionOgg)
         this.load.audio("expUp", expUpOgg)
         this.load.audio('pauseIn', pauseInOgg)
         this.load.audio('pauseOut', pauseOutOgg)
+        this.load.audio("hurt", hurtOgg);
 
         // FONT
         this.load.bitmapFont("pixelFont", fontPng, fontXml)
@@ -69,12 +108,35 @@ export class BootScene extends Scene {
     create() {
         this.scene.start('playGame')
 
+        // MONSTER ANIM
         this.anims.create({
             key: "mob1_anim",
             frames: this.anims.generateFrameNumbers("mob1"),
             frameRate: 12,
             repeat: -1,
         })
+
+        this.anims.create({
+            key: "mob2_anim",
+            frames: this.anims.generateFrameNumbers("mob2"),
+            frameRate: 12,
+            repeat: -1,
+        })
+
+        this.anims.create({
+            key: "mob3_anim",
+            frames: this.anims.generateFrameNumbers("mob3"),
+            frameRate: 12,
+            repeat: -1,
+        })
+
+        this.anims.create({
+            key: "mob4_anim",
+            frames: this.anims.generateFrameNumbers("mob4"),
+            frameRate: 12,
+            repeat: -1,
+        })
+
 
         // EFFECT
         this.anims.create({
@@ -83,6 +145,29 @@ export class BootScene extends Scene {
             frameRate: 20,
             repeat: 0,
             hideOnComplete: true,
+        })
+        
+        this.anims.create({
+            key: "scratch_white",
+            frames: this.anims.generateFrameNumbers("claw_white"),
+            frameRate: 20,
+            repeat: 0,
+            hideOnComplete: true,
+        })
+
+        this.anims.create({
+            key: "scratch_yellow",
+            frames: this.anims.generateFrameNumbers("claw_yellow"),
+            frameRate: 20,
+            repeat: 0,
+            hideOnComplete: true,
+        })
+
+        this.anims.create({
+            key: "catnip_anim",
+            frames: this.anims.generateFrameNumbers("catnip"),
+            frameRate: 20,
+            repeat: -1,
         })
 
         // EXP UP ITEMS

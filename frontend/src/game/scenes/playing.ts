@@ -7,13 +7,14 @@ import BarWrap from "../ui/barWrap"
 import { setBackground } from "../utils/backgroundManager"
 import Player from "../characters/player"
 import gameConfig from ".."
-import { addMonsterEvent } from "../utils/monsterManager"
+import { addMonsterEvent, removeOldestMonsterEvent } from "../utils/monsterManager"
 import Monster from "../characters/monster"
 
-import { addAttckEvent } from '../utils/attackManager'
-import { Weapon } from "../types"
+import { addAttackEvent, removeAttack, setAttackDamage, setAttackScale } from '../utils/attackManager'
+import { StaticWeapon, Weapon } from "../types"
 import ExpUp from "../items/expUp"
 import { pause } from "../utils/pauseManager"
+import { createTime } from "../utils/timer"
 
 export default class PlayingScene extends Phaser.Scene {
     private cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys
@@ -25,7 +26,7 @@ export default class PlayingScene extends Phaser.Scene {
     public closest?: GameObjects.GameObject | null
     public weaponDynamic?: GameObjects.Group
     public weaponStatic?: GameObjects.Group
-    public attackEvent?: object
+    public attackEvent: any
     public expUps?: GameObjects.Group
     public barWrap?: BarWrap
     public expBar?: ExpBar
@@ -44,6 +45,9 @@ export default class PlayingScene extends Phaser.Scene {
         this.sound.add("expUp")
         this.sound.add('pauseIn')
         this.sound.add('pauseOut')
+        this.sound.add("scratch")
+        this.sound.add("hitMonster")
+        this.sound.add('hurt')
 
         // player를 m_player라는 멤버 변수로 추가합니다.
         this.player = new Player(this)
@@ -63,10 +67,7 @@ export default class PlayingScene extends Phaser.Scene {
         this.weaponDynamic = this.add.group()
         this.weaponStatic = this.add.group()
         this.attackEvent = {}
-
-        this.attackEvent = {
-            ...addAttckEvent(this, 'beam', 10, 1, 1000)
-        }
+        addAttackEvent(this, 'claw', 10, 2, 750)
 
         // collisions 충돌
         // 플레이어와 몹의 충돌
@@ -125,6 +126,9 @@ export default class PlayingScene extends Phaser.Scene {
             },
             this
         )
+
+        // timer
+        createTime(this)
     }
 
     init() {
@@ -164,28 +168,29 @@ export default class PlayingScene extends Phaser.Scene {
         // vector = [x좌표 방향, y좌표 방향]입니다.
         // 왼쪽 키가 눌려있을 때는 vector[0] += -1, 오른쪽 키가 눌려있을 때는 vector[0] += 1을 해줍니다.
         // 위/아래 또한 같은 방법으로 벡터를 수정해줍니다.
-        const vector = [0, 0]
         let moveValue = ''
         const { right, left, up, down } = this.cursorKeys as Phaser.Types.Input.Keyboard.CursorKeys
         const player = this.player as Player
+        player.direction = [0, 0]
 
         if(this.isMoveKeydown()) {
             if(left.isDown) {
                 moveValue = 'run-left'
-                vector[0] += -1
+                player.direction[0] += -1
             } else if(right.isDown) {
                 moveValue = 'run-right'
-                vector[0] += 1
+                player.direction[0] += 1
             } else if(up.isDown) {
                 moveValue = 'run-up'
-                vector[1] += -1
+                player.direction[1] += -1
             } else if(down.isDown) {
                 moveValue = 'run-down'
-                vector[1] += 1
+                player.direction[1] += 1
             } else {
                 moveValue = 'idle'
             }
 
+            player.nowDirection = [...player.direction]
             player.moving = true
         } else {
             player.moving = false
@@ -200,8 +205,16 @@ export default class PlayingScene extends Phaser.Scene {
             if(dir) player.play(`idle-${dir}`)
         } 
 
-        player.setVelocityX(vector[0] * player.speed)
-        player.setVelocityY(vector[1] * player.speed)
+        const x = player.direction[0] * player.speed
+        const y = player.direction[1] * player.speed
+
+        player.setVelocityX(x)
+        player.setVelocityY(y)
+
+        this.weaponStatic?.children.each((weapon) => {
+            (weapon as StaticWeapon).move(x, y)
+            return true
+        }, this)
     }
 
     pickExpUp(_: Player, expUp: ExpUp) {
@@ -228,13 +241,43 @@ export default class PlayingScene extends Phaser.Scene {
 
         switch(this.barWrap?.level) {
             case 2:
+                removeOldestMonsterEvent(this)
+                addMonsterEvent(this, 1000, 'mob2', 'mob2_anim', 20, 0.8)
+                // claw 공격 크기 확대
+                setAttackScale(this, 'claw', 4)
                 break
             case 3:
+                removeOldestMonsterEvent(this)
+                addMonsterEvent(this, 1000, 'mob3', 'mob3_anim', 40, 0.7)
+        
+                removeAttack(this, 'claw')
+
+                addAttackEvent(this, 'beam', 5, 1, 500)
+                // catnip 공격 추가
+                addAttackEvent(this, 'catnip', 3, 10)
                 break
-            
             case 4:
+                removeOldestMonsterEvent(this)
+                addMonsterEvent(this, 1000, 'mob4', 'mob4_anim', 80, 0.6)
+                // catnip 공격 크기 확대
+                setAttackScale(this, 'catnip', 15)
+                break
+            case 5:
+                // claw 공격 삭제
+                // beam 공격 추가
+                removeAttack(this, 'beam')
+                addAttackEvent(this, 'beam', 5, 5, 250)
+                break
+            case 6:
+                setAttackScale(this, 'beam', 2)
+                setAttackDamage(this, 'beam', 20)
                 break
 
+            case 7:
+                // setAttackScale(this, 'claw', 6)
+                setAttackScale(this, 'beam', 4)
+                // setAttackDamage(this, 'claw', 40)
+                break
             default:
                 break
         }

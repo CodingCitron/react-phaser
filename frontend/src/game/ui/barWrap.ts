@@ -28,7 +28,7 @@ export default class BarWrap extends Phaser.GameObjects.Graphics {
             )
             .setScrollFactor(0)
             .setDepth(100)
-                console.log(Config.width)
+            
         this.level = 1
         this.levelLabel = scene.add
             .bitmapText(

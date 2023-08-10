@@ -8,6 +8,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     public speed: number
     public canBeAttacked: boolean
     public hpBar: HpBar
+    public nowDirection: number[]
+    public direction: number[]
 
     constructor(scene: Phaser.Scene) {
         // 화면의 가운데에 player를 추가해줍니다.
@@ -36,6 +38,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.canBeAttacked = true
 
         this.hpBar = new HpBar(scene, this, 100)
+
+        // 플레이어 방향
+        this.nowDirection = [0, 1]
+        this.direction = [0, 0]
     }
 
     private createPlayerAnimations() {
@@ -118,7 +124,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (!this.canBeAttacked) return
 
         // 플레이어가 다친 소리를 재생합니다.
-        // this.scene.m_hurtSound.play()
+        this.scene.sound.get('hurt').play()
 
         // 쿨타임을 갖습니다.
         this.setCooldown()

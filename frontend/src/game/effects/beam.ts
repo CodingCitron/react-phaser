@@ -21,13 +21,15 @@ export default class Beam extends Phaser.Physics.Arcade.Sprite {
 
         scene.add.existing(this)
         scene.physics.world.enableBody(this) // 충돌 업데이트 감지
-        if(scene.weaponDynamic) scene.weaponDynamic.add(this)
-        
+
         this.damage = damage
         this.scale = scale
         this.setDepth(30)
         this.setVelocity()
         this.setAngle()
+
+        if(scene.weaponDynamic) scene.weaponDynamic.add(this)
+        scene.sound.get('beam').play()
 
         scene.time.addEvent({
             delay: this.duration,

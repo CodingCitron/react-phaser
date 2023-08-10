@@ -51,7 +51,7 @@ export function pause(scene: PlayingScene, type: string) {
 
         // 검은 veil과 문구를 띄웁니다.
         scene.veil = createVeil(scene)
-        scene.pauseText = createPauseText(scene, type_pause)
+        scene.textPause = createPauseText(scene, type_pause)
 
         const getScene = game.scene.getScene(scene)
         // pause 유형에 따라 다른 소리를 재생해줍니다.
