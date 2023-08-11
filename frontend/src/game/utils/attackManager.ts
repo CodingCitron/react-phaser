@@ -11,7 +11,7 @@ export function addAttackEvent(
     scale: number,
     repeatGap: number = 0    
 ) {
-    const player = scene.player as Player
+    // const player = scene.player as Player
     const reslut = {} as any
     reslut[attackType] = null
 
@@ -100,6 +100,8 @@ function doAttackOneSet(scene: PlayingScene, attackType: string, damage: number,
 
 // scene에 있는 attackType의 공격을 제거해주는 함수입니다.
 export function removeAttack(scene: PlayingScene, attackType: string) {
+    if (!scene.attackEvent[attackType]) return
+
     // catnip의 경우 object를 제거합니다.
     if (attackType === "catnip") {
         scene.attackEvent[attackType].object.destroy()

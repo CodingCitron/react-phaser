@@ -7,10 +7,10 @@ import BarWrap from "../ui/barWrap"
 import { setBackground } from "../utils/backgroundManager"
 import Player from "../characters/player"
 import gameConfig from ".."
-import { addMonsterEvent, removeOldestMonsterEvent } from "../utils/monsterManager"
+import { addMob, addMonsterEvent, removeOldestMonsterEvent } from "../utils/monsterManager"
 import Monster from "../characters/monster"
 
-import { addAttackEvent, removeAttack, setAttackDamage, setAttackScale } from '../utils/attackManager'
+import { addAttackEvent, removeAttack, setAttackDamage, setAttackRepeatGap, setAttackScale } from '../utils/attackManager'
 import { StaticWeapon, Weapon } from "../types"
 import ExpUp from "../items/expUp"
 import { pause } from "../utils/pauseManager"
@@ -48,12 +48,14 @@ export default class PlayingScene extends Phaser.Scene {
         this.sound.add("scratch")
         this.sound.add("hitMonster")
         this.sound.add('hurt')
+        this.sound.add("gameOver")
+        this.sound.add("gameClear")
 
         // player를 m_player라는 멤버 변수로 추가합니다.
         this.player = new Player(this)
         this.cameras.main.startFollow(this.player)
         // PlayingScene의 background를 설정합니다.
-        this.background = setBackground(this, 'background')
+        setBackground(this, 'background')
 
         // monsters
         this.cursorKeys = this.input.keyboard?.createCursorKeys()
@@ -68,6 +70,9 @@ export default class PlayingScene extends Phaser.Scene {
         this.weaponStatic = this.add.group()
         this.attackEvent = {}
         addAttackEvent(this, 'claw', 10, 2, 750)
+
+        // 보스몹이 잘 추가되는지 확인하기 위해 create 메서드 내에서 addMob을 실행시켜봅니다.
+        // addMob(this, "lion", "lion_anim", 10)
 
         // collisions 충돌
         // 플레이어와 몹의 충돌
@@ -247,7 +252,7 @@ export default class PlayingScene extends Phaser.Scene {
                 setAttackScale(this, 'claw', 4)
                 break
             case 3:
-                removeOldestMonsterEvent(this)
+                // removeOldestMonsterEvent(this)
                 addMonsterEvent(this, 1000, 'mob3', 'mob3_anim', 40, 0.7)
         
                 removeAttack(this, 'claw')
@@ -255,9 +260,12 @@ export default class PlayingScene extends Phaser.Scene {
                 addAttackEvent(this, 'beam', 5, 1, 500)
                 // catnip 공격 추가
                 addAttackEvent(this, 'catnip', 3, 10)
+
+                // 백그라운드 변경
+                setBackground(this, 'background2')
                 break
             case 4:
-                removeOldestMonsterEvent(this)
+                // removeOldestMonsterEvent(this)
                 addMonsterEvent(this, 1000, 'mob4', 'mob4_anim', 80, 0.6)
                 // catnip 공격 크기 확대
                 setAttackScale(this, 'catnip', 15)
@@ -267,16 +275,24 @@ export default class PlayingScene extends Phaser.Scene {
                 // beam 공격 추가
                 removeAttack(this, 'beam')
                 addAttackEvent(this, 'beam', 5, 5, 250)
+                setBackground(this, 'background3')
                 break
             case 6:
-                setAttackScale(this, 'beam', 2)
+                // setAttackScale(this, 'beam', 2)
                 setAttackDamage(this, 'beam', 20)
                 break
 
             case 7:
+                setAttackDamage(this, 'beam', 30)
+                setAttackRepeatGap(this, 'beam', 200)
                 // setAttackScale(this, 'claw', 6)
-                setAttackScale(this, 'beam', 4)
+                // setAttackScale(this, 'beam', 4)
                 // setAttackDamage(this, 'claw', 40)
+
+                setBackground(this, 'background4')
+
+                // 보스몹
+                addMob(this, 'lion', 'lion_anim', 2500)
                 break
             default:
                 break

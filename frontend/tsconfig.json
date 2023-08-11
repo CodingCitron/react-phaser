@@ -13,11 +13,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
+    
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false, // 해당 옵션을 비활성화하면 읽지 않는 변수에 오류를 일으키지 않음
+    "noUnusedParameters": false, // 사용하지 않는 옵션에 대해서 에러를 일으킬지 말지
     "noFallthroughCasesInSwitch": true,
     
     /* read typesfile */

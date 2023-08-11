@@ -1,5 +1,8 @@
 import { Scene } from "phaser"
 import background from '../../assets/img/grass.png'
+import background2 from '../../assets/img/background.png'
+import background3 from '../../assets/img/background-2.png'
+import background4 from '../../assets/img/background-3.png'
 import player from '../../assets/img/spritesheets/characters/cat-set.png'
 
 // monster
@@ -7,6 +10,7 @@ import monster1 from '../../assets/img/spritesheets/mob1.png'
 import monster2 from '../../assets/img/spritesheets/mob2.png' 
 import monster3 from '../../assets/img/spritesheets/mob3.png'
 import monster4 from '../../assets/img/spritesheets/mob4.png'
+import lionImg from '../../assets/img/spritesheets/lion.png'
 
 // item
 import expUpImg from '../../assets/img/spritesheets/expUp.png'
@@ -25,6 +29,8 @@ import catnipImg from '../../assets/img/spritesheets/catnip.png'
 import scratchOgg from '../../assets/sounds/scratch.ogg'
 import hitMobOgg from '../../assets/sounds/hitMob.ogg'
 import hurtOgg from '../../assets/sounds/hurt.ogg'
+import gameOverOgg from '../../assets/sounds/gameover.ogg'
+import gameClearOgg from '../../assets/sounds/gameClear.ogg'
 
 //font
 import fontPng from '../../assets/font/font.png'
@@ -38,7 +44,10 @@ export class BootScene extends Scene {
     preload() {
         // BACKGROUND
         this.load.image('background', background)
-        
+        this.load.image("background2", background2)
+        this.load.image("background3", background3)
+        this.load.image("background4", background3)
+
         // CHARACTER
         this.load.spritesheet('player', player, {
             frameWidth: 16,
@@ -84,6 +93,10 @@ export class BootScene extends Scene {
             frameWidth: 32,
             frameHeight: 32,
         })
+        this.load.spritesheet("lion", lionImg, {
+            frameWidth: 48,
+            frameHeight: 64,
+        })
 
         // ITEMS
         this.load.spritesheet("exp-up", expUpImg, {
@@ -99,14 +112,16 @@ export class BootScene extends Scene {
         this.load.audio("expUp", expUpOgg)
         this.load.audio('pauseIn', pauseInOgg)
         this.load.audio('pauseOut', pauseOutOgg)
-        this.load.audio("hurt", hurtOgg);
+        this.load.audio("hurt", hurtOgg)
+        this.load.audio("gameOver", gameOverOgg)
+        this.load.audio("gameClear", gameClearOgg)
 
         // FONT
         this.load.bitmapFont("pixelFont", fontPng, fontXml)
     }
 
     create() {
-        this.scene.start('playGame')
+        this.scene.start('startScene')
 
         // MONSTER ANIM
         this.anims.create({
@@ -137,6 +152,22 @@ export class BootScene extends Scene {
             repeat: -1,
         })
 
+        this.anims.create({
+            key: "lion_anim",
+            frames: this.anims.generateFrameNumbers("lion"),
+            frameRate: 12,
+            repeat: -1,
+        })
+
+        this.anims.create({
+            key: "lion_idle",
+            frames: this.anims.generateFrameNumbers("lion", {
+                start: 0,
+                end: 0,
+            }),
+            frameRate: 1,
+            repeat: 0,
+        })
 
         // EFFECT
         this.anims.create({

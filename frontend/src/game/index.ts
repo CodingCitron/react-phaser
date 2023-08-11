@@ -2,6 +2,8 @@ import { Types } from "phaser"
 import { BootScene } from "./scenes/boot"
 import PlayingScene from "./scenes/playing"
 import GameOverScene from "./scenes/gameover"
+import StartScene from "./scenes/startScene"
+import GameClearScene from "./scenes/gameclear"
 // console.log(window.innerWidth, window.innerHeight)
 
 const gameConfig: Types.Core.GameConfig = {
@@ -21,11 +23,10 @@ const gameConfig: Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            // debug: process.env.DEBUG === 'true' 
-            debug: true
+            debug: import.meta.env.DEV
         }
     },
-    scene: [BootScene, PlayingScene, GameOverScene] // [BootScene, EndScene] 여러가지 사용
+    scene: [BootScene, StartScene, PlayingScene, GameOverScene, GameClearScene] // [BootScene, EndScene] 여러가지 사용
 }
   
   export default gameConfig

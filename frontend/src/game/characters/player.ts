@@ -1,7 +1,8 @@
 import Phaser from "phaser"
 import Config from '../index'
 import HpBar from '../ui/hpBar'
-import { loseGame } from "../utils/loseManager"
+import { loseGame } from "../utils/sceneManager"
+import PlayingScene from "../scenes/playing"
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     public moving: boolean
@@ -11,7 +12,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     public nowDirection: number[]
     public direction: number[]
 
-    constructor(scene: Phaser.Scene) {
+    constructor(scene: Phaser.Scene, showHpBar: Boolean | undefined = true) {
         // 화면의 가운데에 player를 추가해줍니다.
         // scene.add.existing : scene에 오브젝트를 추가
         // scene.physics.add.existing : scene의 물리엔진에 오브젝트를 추가
@@ -28,7 +29,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // 해당 오브젝트가 물리적으로 얼만큼의 면적을 차지할 지 설정하는 함수입니다.
         // 디폴트로 이미지 사이즈로 설정되는데, 그러면 추후 몹을 추가했을 때 너무 잘 부딪히는 느낌이 드므로 원본 이미지보다 약간 작게 설정해주었습니다.
-        this.setBodySize(16, 16)
+        this.setBodySize(12, 16)
         
         this.moving = false
         this.speed = 250
@@ -38,13 +39,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.canBeAttacked = true
 
         this.hpBar = new HpBar(scene, this, 100)
+        
+        if(showHpBar) {
+            this.hpBar.setVisible(true)
+        } else {
+            this.hpBar.setVisible(false)
+        }
 
         // 플레이어 방향
         this.nowDirection = [0, 1]
         this.direction = [0, 0]
     }
 
-    private createPlayerAnimations() {
+    createPlayerAnimations() {
         this.anims.create({
             key: 'run-up',
             frames: this.anims.generateFrameNumbers('player', {
@@ -133,7 +140,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // 패배
         if(this.hpBar.currentHP <= 0) {
-            loseGame(this.scene)
+            loseGame(this.scene as PlayingScene)
         }
     }
 
