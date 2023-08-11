@@ -43,7 +43,6 @@ export class BootScene extends Scene {
 
     preload() {
         // BACKGROUND
-        console.log(background)
         this.load.image('background', background)
         this.load.image("background2", background2)
         this.load.image("background3", background3)
