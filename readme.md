@@ -27,5 +27,5 @@
 - 게임 일시 정지
 - 게임 재귀
 
-### [배포](https://64d5f35454f36840b8ce54c1--chic-lollipop-496dd1.netlify.app/)
+### [게임 해보기](https://64d5f35454f36840b8ce54c1--chic-lollipop-496dd1.netlify.app/)
 - 7 레벨되면 보스가 나오고 보스잡으면 게임 클리어됩니다.
